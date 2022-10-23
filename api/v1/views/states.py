@@ -1,30 +1,29 @@
 #!/usr/bin/python3
-'''a new view for State objects'''
+"""states list API"""
 
 from api.v1.views import app_views
-from flask import jsonify, abort, request, make_response
+from flask import abort, jsonify, make_response, request
 from models import storage
 from models.state import State
 
 
 @app_views.route('/states', methods=['GET'], strict_slashes=False)
 def get_states():
-    '''return all states'''
-    mylist = []
-    states = storage.all('State').values()
-    for state in states:
-        mylist.append(state.to_dict())
-    return jsonify(mylist)
+    """get state information for all states"""
+    states = []
+    for state in storage.all("State").values():
+        states.append(state.to_dict())
+    return jsonify(states)
 
 
 @app_views.route('/states/<string:state_id>', methods=['GET'],
                  strict_slashes=False)
-def get_state_id(state_id):
-    '''get information about specific state'''
-    state = storage.get("State", state_id).to_dict()
+def get_state(state_id):
+    """get state information for specified state"""
+    state = storage.get("State", state_id)
     if state is None:
         abort(404)
-    return jsonify(state)
+    return jsonify(state.to_dict())
 
 
 @app_views.route('/states/<string:state_id>', methods=['DELETE'],
